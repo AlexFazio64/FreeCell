@@ -13,10 +13,8 @@ public class Controller {
 	public HBox piles;
 	
 	ArrayList<CardStack> stacks = new ArrayList<>();
-	ArrayList<Card> cards = new ArrayList<>();
-	final String[] suits = new String[]{"♥", "♦", "♣", "♠"};
+	final String[] suits = new String[]{"❤", "♦", "♣", "♠"};
 	final String[] ranks = new String[]{"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
-	
 	
 	public void initialize() {
 		// create drafts
@@ -48,18 +46,19 @@ public class Controller {
 		}
 		
 		// create cards
+		ArrayList<Card> cards = new ArrayList<>();
 		for (String suit: suits) {
 			for (String rank: ranks) {
 				cards.add(new Card(rank, suit, null));
 			}
 		}
 		
+		// assign cards to stacks
 		for (int i = 0; i < 52; i++) {
 			int index = (int) ( Math.random() * cards.size() );
 			Card card = cards.get(index);
 			stacks.get(i % 8).getChildren().add(new Card(card.getValue() + "", card.getSuit(), stacks.get(i % 8)));
 			cards.remove(index);
 		}
-		
 	}
 }

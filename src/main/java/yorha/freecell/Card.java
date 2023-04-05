@@ -22,6 +22,10 @@ public class Card extends Label {
 	public Card(String value, String suit, CardStack stack) {
 		super();
 		
+		this.value = value;
+		this.suit = suit;
+		this.stack = stack;
+		
 		switch (value) {
 			case "1" -> value = "A";
 			case "11" -> value = "J";
@@ -29,18 +33,13 @@ public class Card extends Label {
 			case "13" -> value = "K";
 		}
 		
-		this.value = value;
-		this.suit = suit;
-		this.stack = stack;
-		
 		setText(value + " " + suit);
 		setFont(Font.font(20));
 		setAlignment(Pos.CENTER);
 		setMinWidth(80);
 		setPadding(new javafx.geometry.Insets(5));
 		setTextFill(isRed() ? Color.RED : Color.BLACK);
-		setStyle("-fx-background-color: white; -fx-border-color: black; " +
-				         "-fx-border-width: 1px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+		setStyle("-fx-background-color: white; -fx-border-color: black; " + "-fx-border-width: 1px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
 		
 		setOnDragDetected(event -> {
 			Dragboard db = startDragAndDrop(TransferMode.MOVE);
@@ -56,6 +55,7 @@ public class Card extends Label {
 			db.setContent(content);
 			event.consume();
 		});
+		
 		setOnDragDone(event -> {
 			if ( event.getTransferMode() == TransferMode.MOVE ) {
 				Parent parent = getParent();
@@ -66,6 +66,7 @@ public class Card extends Label {
 					} else {
 						( (VBox) parent ).getChildren().remove(this);
 					}
+					System.out.println("removed");
 				}
 			}
 			event.consume();
@@ -88,18 +89,20 @@ public class Card extends Label {
 	
 	@Override
 	public String toString() {
-		return getText();
+		return switch (value) {
+			case "1" -> "A";
+			case "11" -> "J";
+			case "12" -> "Q";
+			case "13" -> "K";
+			default -> value;
+		} + " " + suit;
 	}
-	
-//	public boolean equals(Card other) {
-//		return this.getValue() == other.getValue() && suit.equals(other.getSuit());
-//	}
 	
 	public boolean isRed() {
-		return suit.equals("♥") || suit.equals("♦");
+		return suit.equals("❤") || suit.equals("♦");
 	}
 	
-//	public boolean isBlack() {
-//		return suit.equals("♠") || suit.equals("♣");
-//	}
+	public boolean isBlack() {
+		return suit.equals("♠") || suit.equals("♣");
+	}
 }

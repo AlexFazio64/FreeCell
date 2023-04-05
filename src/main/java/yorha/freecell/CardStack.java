@@ -8,18 +8,16 @@ import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 
 public class CardStack extends VBox {
-	ArrayList<Card> cards;
-	
 	public CardStack() {
 		super();
-		cards = new ArrayList<>();
-		
 		setPadding(new Insets(5, 0, 0, 0));
 		
 		setOnDragOver(event -> {
 			if ( event.getGestureSource() != this && event.getDragboard().hasString() && ( (Card) event.getGestureSource() ).stack != this ) {
-				if ( GAME.checkMove(event.getDragboard().getString(), cards) ) {
+				if ( GAME.checkMove(event.getDragboard().getString(), getLastOfStack()) ) {
 					event.acceptTransferModes(TransferMode.MOVE);
+				} else {
+					System.out.println("no");
 				}
 			}
 			event.consume();
@@ -28,16 +26,20 @@ public class CardStack extends VBox {
 			Dragboard db = event.getDragboard();
 			boolean success = false;
 			if ( db.hasString() ) {
-				String all = db.getString().replace("[", "");
-				all = all.replace("]", "");
-				for (String s: all.split(", ")) {
-					String[] card = s.split(" ");
-					this.getChildren().add(new Card(card[0], card[1], this));
+				ArrayList<Card> cards = GAME.strToList(db.getString());
+				for (Card c: cards) {
+					this.getChildren().add(new Card(c.getValue() + "", c.getSuit(), this));
+					System.out.println("added 1");
 				}
+				System.out.println(cards.size());
 				success = true;
 			}
 			event.setDropCompleted(success);
 			event.consume();
 		});
+	}
+	
+	public Card getLastOfStack() {
+		return (Card) this.getChildren().get(getChildren().size() - 1);
 	}
 }
