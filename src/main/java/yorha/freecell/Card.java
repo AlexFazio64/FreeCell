@@ -1,5 +1,7 @@
 package yorha.freecell;
 
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.input.ClipboardContent;
@@ -9,43 +11,48 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Card extends Label {
 	private final String value;
 	private final String suit;
+	public CardStack stack;
 	
-	public Card(String value, String suit) {
+	public Card(String value, String suit, CardStack stack) {
 		super();
-		setFont(Font.font(20));
 		
-		// set font color
-		setTextFill(isBlack() ? Color.BLACK : Color.RED);
+		switch (value) {
+			case "1" -> value = "A";
+			case "11" -> value = "J";
+			case "12" -> value = "Q";
+			case "13" -> value = "K";
+		}
 		
 		this.value = value;
 		this.suit = suit;
+		this.stack = stack;
 		
+		setText(value + " " + suit);
+		setFont(Font.font(20));
+		setAlignment(Pos.CENTER);
+		setMinWidth(80);
+		setPadding(new javafx.geometry.Insets(5));
+		setTextFill(isRed() ? Color.RED : Color.BLACK);
+		setStyle("-fx-background-color: white; -fx-border-color: black; " +
+				         "-fx-border-width: 1px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
 		
-		switch (value) {
-			case "1" -> setText("A");
-			case "11" -> setText("J");
-			case "12" -> setText("Q");
-			case "13" -> setText("K");
-		}
-		
-		switch (suit) {
-			case "S" -> setText(value + "♠");
-			case "H" -> setText(value + "♥");
-			case "C" -> setText(value + "♣");
-			case "D" -> setText(value + "♦");
-		}
-		
-		drag_drop_setup();
-	}
-	
-	private void drag_drop_setup() {
 		setOnDragDetected(event -> {
 			Dragboard db = startDragAndDrop(TransferMode.MOVE);
 			ClipboardContent content = new ClipboardContent();
-			content.putString(toString());
+			List<Node> children;
+			if ( stack != null ) {
+				children = stack.getChildren().subList(stack.getChildren().indexOf(this), stack.getChildren().size());
+			} else {
+				children = new ArrayList<>();
+				children.add(this);
+			}
+			content.putString(children.toString());
 			db.setContent(content);
 			event.consume();
 		});
@@ -53,7 +60,12 @@ public class Card extends Label {
 			if ( event.getTransferMode() == TransferMode.MOVE ) {
 				Parent parent = getParent();
 				if ( parent instanceof VBox ) {
-					( (VBox) parent ).getChildren().remove(this);
+					if ( stack != null ) {
+						int last = stack.getChildren().indexOf(this);
+						stack.getChildren().remove(last, stack.getChildren().size());
+					} else {
+						( (VBox) parent ).getChildren().remove(this);
+					}
 				}
 			}
 			event.consume();
@@ -61,7 +73,13 @@ public class Card extends Label {
 	}
 	
 	public int getValue() {
-		return Integer.parseInt(value);
+		return switch (value) {
+			case "A" -> 1;
+			case "J" -> 11;
+			case "Q" -> 12;
+			case "K" -> 13;
+			default -> Integer.parseInt(value);
+		};
 	}
 	
 	public String getSuit() {
@@ -70,18 +88,18 @@ public class Card extends Label {
 	
 	@Override
 	public String toString() {
-		return value + " " + suit;
+		return getText();
 	}
 	
-	public boolean equals(Card other) {
-		return this.getValue() == other.getValue() && suit.equals(other.getSuit());
-	}
+//	public boolean equals(Card other) {
+//		return this.getValue() == other.getValue() && suit.equals(other.getSuit());
+//	}
 	
 	public boolean isRed() {
-		return suit.equals("Hearts") || suit.equals("Diamonds");
+		return suit.equals("♥") || suit.equals("♦");
 	}
 	
-	public boolean isBlack() {
-		return suit.equals("Spades") || suit.equals("Clubs");
-	}
+//	public boolean isBlack() {
+//		return suit.equals("♠") || suit.equals("♣");
+//	}
 }

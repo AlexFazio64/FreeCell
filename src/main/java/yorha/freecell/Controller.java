@@ -3,36 +3,43 @@ package yorha.freecell;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
 
 public class Controller {
 	public BorderPane container;
-	public HBox top;
-	public Pane draft1;
-	public Pane draft2;
-	public Pane draft3;
-	public Pane draft4;
-	public Pane aces1;
-	public Pane aces2;
-	public Pane aces3;
-	public Pane aces4;
 	public HBox main;
+	public HBox drafts;
+	public HBox piles;
 	
-	ArrayList<Stacks> stacks = new ArrayList<>();
+	ArrayList<CardStack> stacks = new ArrayList<>();
 	ArrayList<Card> cards = new ArrayList<>();
+	final String[] suits = new String[]{"♥", "♦", "♣", "♠"};
+	final String[] ranks = new String[]{"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+	
 	
 	public void initialize() {
-		// create cards
-		for (int i = 0; i < 52; i++) {
-			Card card = new Card(i % 13 + 1 + "", new String[]{"S", "H", "C", "D"}[i / 13]);
-			cards.add(card);
+		// create drafts
+		for (int i = 0; i < 4; i++) {
+			DraftPile stack = new DraftPile();
+			stack.setStyle("-fx-border-color: black;");
+			stack.setAlignment(Pos.TOP_CENTER);
+			stack.setPrefWidth(200);
+			drafts.getChildren().add(stack);
+		}
+		
+		// create piles
+		for (int i = 0; i < 4; i++) {
+			SuitPile pile = new SuitPile(suits[i]);
+			pile.setStyle("-fx-border-color: black;");
+			pile.setAlignment(Pos.TOP_CENTER);
+			pile.setPrefWidth(200);
+			piles.getChildren().add(pile);
 		}
 		
 		// create stacks
 		for (int i = 0; i < 8; i++) {
-			Stacks stack = new Stacks();
+			CardStack stack = new CardStack();
 			stack.setStyle("-fx-border-color: black;");
 			stack.setAlignment(Pos.TOP_CENTER);
 			stack.setPrefWidth(200);
@@ -40,10 +47,19 @@ public class Controller {
 			stacks.add(stack);
 		}
 		
-		// shuffle cards in stacks
-		cards.forEach(card -> {
-			int index = (int) ( Math.random() * stacks.size() );
-			stacks.get(index).getChildren().add(card);
-		});
+		// create cards
+		for (String suit: suits) {
+			for (String rank: ranks) {
+				cards.add(new Card(rank, suit, null));
+			}
+		}
+		
+		for (int i = 0; i < 52; i++) {
+			int index = (int) ( Math.random() * cards.size() );
+			Card card = cards.get(index);
+			stacks.get(i % 8).getChildren().add(new Card(card.getValue() + "", card.getSuit(), stacks.get(i % 8)));
+			cards.remove(index);
+		}
+		
 	}
 }
