@@ -42,6 +42,9 @@ public class Card extends Label {
 		setStyle("-fx-background-color: white; -fx-border-color: black; " + "-fx-border-width: 1px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
 		
 		setOnDragDetected(event -> {
+			if ( this.getParent() instanceof HomeCell ) {
+				return;
+			}
 			Dragboard db = startDragAndDrop(TransferMode.MOVE);
 			ClipboardContent content = new ClipboardContent();
 			List<Node> children;
@@ -57,6 +60,9 @@ public class Card extends Label {
 		});
 		
 		setOnDragDone(event -> {
+			if ( this.getParent() instanceof HomeCell ) {
+				return;
+			}
 			if ( event.getTransferMode() == TransferMode.MOVE ) {
 				Parent parent = getParent();
 				if ( parent instanceof VBox ) {
@@ -66,7 +72,6 @@ public class Card extends Label {
 					} else {
 						( (VBox) parent ).getChildren().remove(this);
 					}
-					System.out.println("removed");
 				}
 			}
 			event.consume();
@@ -82,6 +87,7 @@ public class Card extends Label {
 				}
 			}
 		});
+		
 	}
 	
 	public int getValue() {
@@ -115,5 +121,10 @@ public class Card extends Label {
 	
 	public boolean isBlack() {
 		return suit.equals("♠") || suit.equals("♣");
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof Card && obj.toString().equals(this.toString());
 	}
 }

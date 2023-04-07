@@ -4,8 +4,6 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 
-import java.util.Objects;
-
 public class HomeCell extends VBox {
 	final String suit;
 	
@@ -17,10 +15,8 @@ public class HomeCell extends VBox {
 		setOnDragOver(event -> {
 			Dragboard db = event.getDragboard();
 			if ( event.getGestureSource() != this && event.getDragboard().hasString() ) {
-				if ( db.getString().lastIndexOf(",") == -1 ) {
-					if ( Objects.equals(( (Card) event.getGestureSource() ).getSuit(), suit) || GAME.godmode ) {
-						event.acceptTransferModes(TransferMode.MOVE);
-					}
+				if ( GAME.checkHome(db.getString(), this) || GAME.godmode ) {
+					event.acceptTransferModes(TransferMode.MOVE);
 				}
 			}
 			event.consume();
@@ -28,7 +24,7 @@ public class HomeCell extends VBox {
 		setOnDragDropped(event -> {
 			Dragboard db = event.getDragboard();
 			boolean success = false;
-			if ( db.hasString() && ( this.getChildren().size() == 0 || GAME.godmode ) ) {
+			if ( db.hasString() || GAME.godmode ) {
 				String[] card = db.getString().split(" ");
 				card[0] = card[0].replace("[", "");
 				card[1] = card[1].replace("]", "");
