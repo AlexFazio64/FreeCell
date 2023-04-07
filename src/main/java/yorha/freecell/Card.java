@@ -17,9 +17,9 @@ import java.util.List;
 public class Card extends Label {
 	private final String value;
 	private final String suit;
-	public CardStack stack;
+	public Column stack;
 	
-	public Card(String value, String suit, CardStack stack) {
+	public Card(String value, String suit, Column stack) {
 		super();
 		
 		this.value = value;
@@ -70,6 +70,17 @@ public class Card extends Label {
 				}
 			}
 			event.consume();
+		});
+		
+		setOnMouseClicked(event -> {
+			if ( event.getClickCount() == 2 && GAME.godmode ) {
+				Parent parent = getParent();
+				if ( parent instanceof VBox ) {
+					if ( stack != null ) {
+						( (VBox) parent ).getChildren().remove(this);
+					}
+				}
+			}
 		});
 	}
 	

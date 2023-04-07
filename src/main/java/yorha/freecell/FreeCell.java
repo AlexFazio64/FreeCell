@@ -4,8 +4,8 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 
-public class DraftPile extends VBox {
-	public DraftPile() {
+public class FreeCell extends VBox {
+	public FreeCell() {
 		super();
 		
 		setOnDragOver(event -> {

@@ -3,7 +3,14 @@ package yorha.freecell;
 import java.util.ArrayList;
 
 public class GAME {
+	public static boolean godmode;
+	
 	public static boolean checkMove(String card, Card last) {
+		if ( last == null || godmode ) {
+			//column is free
+			return true;
+		}
+		
 		ArrayList<Card> cards = strToList(card);
 		Card curr = cards.get(0);
 		return curr.getValue() == ( last.getValue() - 1 ) && ( ( curr.isRed() && last.isBlack() ) || ( curr.isBlack() && last.isRed() ) );

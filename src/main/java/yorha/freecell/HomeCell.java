@@ -6,10 +6,10 @@ import javafx.scene.layout.VBox;
 
 import java.util.Objects;
 
-public class SuitPile extends VBox {
+public class HomeCell extends VBox {
 	final String suit;
 	
-	public SuitPile(String suit) {
+	public HomeCell(String suit) {
 		super();
 		
 		this.suit = suit;
@@ -18,7 +18,7 @@ public class SuitPile extends VBox {
 			Dragboard db = event.getDragboard();
 			if ( event.getGestureSource() != this && event.getDragboard().hasString() ) {
 				if ( db.getString().lastIndexOf(",") == -1 ) {
-					if ( Objects.equals(( (Card) event.getGestureSource() ).getSuit(), suit) ) {
+					if ( Objects.equals(( (Card) event.getGestureSource() ).getSuit(), suit) || GAME.godmode ) {
 						event.acceptTransferModes(TransferMode.MOVE);
 					}
 				}
@@ -28,10 +28,11 @@ public class SuitPile extends VBox {
 		setOnDragDropped(event -> {
 			Dragboard db = event.getDragboard();
 			boolean success = false;
-			if ( db.hasString() && this.getChildren().size() == 0 ) {
+			if ( db.hasString() && ( this.getChildren().size() == 0 || GAME.godmode ) ) {
 				String[] card = db.getString().split(" ");
 				card[0] = card[0].replace("[", "");
 				card[1] = card[1].replace("]", "");
+				this.getChildren().removeIf(a -> true);
 				this.getChildren().add(new Card(card[0], card[1], null));
 				success = true;
 			}

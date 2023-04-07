@@ -12,14 +12,14 @@ public class Controller {
 	public HBox drafts;
 	public HBox piles;
 	
-	ArrayList<CardStack> stacks = new ArrayList<>();
+	ArrayList<Column> stacks = new ArrayList<>();
 	final String[] suits = new String[]{"❤", "♦", "♣", "♠"};
 	final String[] ranks = new String[]{"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
 	
 	public void initialize() {
 		// create drafts
 		for (int i = 0; i < 4; i++) {
-			DraftPile stack = new DraftPile();
+			FreeCell stack = new FreeCell();
 			stack.setStyle("-fx-border-color: black;");
 			stack.setAlignment(Pos.TOP_CENTER);
 			stack.setPrefWidth(200);
@@ -28,7 +28,7 @@ public class Controller {
 		
 		// create piles
 		for (int i = 0; i < 4; i++) {
-			SuitPile pile = new SuitPile(suits[i]);
+			HomeCell pile = new HomeCell(suits[i]);
 			pile.setStyle("-fx-border-color: black;");
 			pile.setAlignment(Pos.TOP_CENTER);
 			pile.setPrefWidth(200);
@@ -37,7 +37,7 @@ public class Controller {
 		
 		// create stacks
 		for (int i = 0; i < 8; i++) {
-			CardStack stack = new CardStack();
+			Column stack = new Column();
 			stack.setStyle("-fx-border-color: black;");
 			stack.setAlignment(Pos.TOP_CENTER);
 			stack.setPrefWidth(200);
