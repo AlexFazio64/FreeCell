@@ -32,4 +32,13 @@ public class FreeCell extends VBox {
 			event.consume();
 		});
 	}
+	
+	public void addCard(Card target) {
+		this.getChildren().add(new Card(target.getValue() + "", target.getSuit(), null));
+		try {
+			target.stack.getChildren().remove(target);
+		} catch (Exception e) {
+			System.out.println("no parent for card");
+		}
+	}
 }

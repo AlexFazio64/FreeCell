@@ -2,13 +2,18 @@ package yorha.freecell;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.stage.FileChooser;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class GAME {
 	public static boolean godmode;
-	public static ArrayList<String> lines = new ArrayList<>();
+	public static ArrayList<String> problem = new ArrayList<>();
+	public static ArrayList<String> plan = new ArrayList<>();
 	
 	public static boolean checkColumn(String card, Card last) {
 		if ( last == null || godmode ) {
@@ -44,5 +49,45 @@ public class GAME {
 		
 		Card last = (Card) children.get(children.size() - 1);
 		return card.getValue() == ( last.getValue() + 1 ) && Objects.equals(card.getSuit(), cell.suit);
+	}
+	
+	public static void loadProblem() {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Select Problem File");
+		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text " + "Files", "*.pddl", "*.txt"));
+		fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+		File selectedFile = fileChooser.showOpenDialog(null);
+		
+		try {
+			FileReader fileReader = new FileReader(selectedFile);
+			BufferedReader br = new BufferedReader(fileReader);
+			String line;
+			while (( line = br.readLine() ) != null) {
+				GAME.problem.add(line);
+			}
+			br.close();
+		} catch (Exception ex) {
+			System.out.println("Error reading file");
+		}
+	}
+	
+	public static void loadPlan() {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Select Plan File");
+		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text " + "Files", "*.txt"));
+		fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+		File selectedFile = fileChooser.showOpenDialog(null);
+		
+		try {
+			FileReader fileReader = new FileReader(selectedFile);
+			BufferedReader br = new BufferedReader(fileReader);
+			String line;
+			while (( line = br.readLine() ) != null) {
+				GAME.plan.add(line);
+			}
+			br.close();
+		} catch (Exception ex) {
+			System.out.println("Error reading file");
+		}
 	}
 }

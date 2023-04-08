@@ -52,6 +52,15 @@ public class Column extends VBox {
 		});
 	}
 	
+	public void addCard(Card card) {
+		getChildren().add(new Card(card.getValue() + "", card.getSuit(), this));
+		try {
+			card.stack.getChildren().remove(card);
+		} catch (Exception e) {
+			System.out.println("no parent for card");
+		}
+	}
+	
 	public Card getLastOfStack() {
 		return ( getChildren().size() == 0 ) ? null : (Card) this.getChildren().get(getChildren().size() - 1);
 	}

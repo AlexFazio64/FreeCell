@@ -1,0 +1,6 @@
+(move-from-column-to-column d2 da d8)
+(move-from-column-to-home-top ha d0 0 0)
+(move-from-column-to-free-cell c2 s9 0 0)
+(move-from-column-to-free-cell s2 s9 0 0)
+(move-from-free-cell-to-home s2 d0 0 0)
+(move-from-free-cell-to-column c2 h2 0 0)
