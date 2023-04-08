@@ -11,66 +11,80 @@ import java.util.regex.Pattern;
 public class Controller {
 	public BorderPane container;
 	public HBox main;
-	public HBox drafts;
-	public HBox piles;
-	
-	ArrayList<Column> stacks = new ArrayList<>();
-	final String[] suits = new String[]{"❤", "♦", "♣", "♠"};
-	final String[] ranks = new String[]{"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+	public HBox free;
+	public HBox home;
 	
 	public void initialize() {
-		// create drafts
-		for (int i = 0; i < 4; i++) {
-			FreeCell stack = new FreeCell();
-			stack.setStyle("-fx-border-color: black;");
-			stack.setAlignment(Pos.TOP_CENTER);
-			stack.setPrefWidth(200);
-			drafts.getChildren().add(stack);
-		}
+		final String[] suits = new String[]{"❤", "♦", "♣", "♠"};
+		final String[] ranks = new String[]{"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+		ArrayList<Column> columns = new ArrayList<>();
 		
-		// create piles
-		for (int i = 0; i < 4; i++) {
-			HomeCell pile = new HomeCell(suits[i]);
-			pile.setStyle("-fx-border-color: black;");
-			pile.setAlignment(Pos.TOP_CENTER);
-			pile.setPrefWidth(200);
-			piles.getChildren().add(pile);
-		}
+		freeCellsInit();
+		homeCellsInit(suits);
+		columnsInit(columns);
 		
-		// create stacks
+		parseBottomCols(columns);
+		parseOnCols(columns);
+		
+		// if all columns are empty, print a message
+		if ( columns.stream().allMatch(stack -> stack.getChildren().isEmpty()) ) {
+			defaultConfig(suits, ranks, columns);
+		}
+	}
+	
+	private void columnsInit(ArrayList<Column> columns) {
+		// create columns
 		for (int i = 0; i < 8; i++) {
 			Column stack = new Column();
 			stack.setStyle("-fx-border-color: black;");
 			stack.setAlignment(Pos.TOP_CENTER);
 			stack.setPrefWidth(200);
 			main.getChildren().add(stack);
-			stacks.add(stack);
-		}
-		
-		parseBottomCols();
-		parseOnCols();
-		
-		// if all stacks are empty, print a message
-		if ( stacks.stream().allMatch(stack -> stack.getChildren().isEmpty()) ) {
-//			 create cards
-			ArrayList<Card> cards = new ArrayList<>();
-			for (String suit: suits) {
-				for (String rank: ranks) {
-					cards.add(new Card(rank, suit, null));
-				}
-			}
-
-//		 assign cards to stacks
-			for (int i = 0; i < 52; i++) {
-				int index = (int) ( Math.random() * cards.size() );
-				Card card = cards.get(index);
-				stacks.get(i % 8).getChildren().add(new Card(card.getValue() + "", card.getSuit(), stacks.get(i % 8)));
-				cards.remove(index);
-			}
+			columns.add(stack);
 		}
 	}
 	
-	private void parseOnCols() {
+	private void homeCellsInit(String[] suits) {
+		// create home cells
+		for (int i = 0; i < 4; i++) {
+			HomeCell pile = new HomeCell(suits[i]);
+			pile.setStyle("-fx-border-color: black;");
+			pile.setAlignment(Pos.TOP_CENTER);
+			pile.setPrefWidth(200);
+			home.getChildren().add(pile);
+		}
+	}
+	
+	private void freeCellsInit() {
+		// create free cells
+		for (int i = 0; i < 4; i++) {
+			FreeCell stack = new FreeCell();
+			stack.setStyle("-fx-border-color: black;");
+			stack.setAlignment(Pos.TOP_CENTER);
+			stack.setPrefWidth(200);
+			free.getChildren().add(stack);
+		}
+	}
+	
+	private static void defaultConfig(String[] suits, String[] ranks, ArrayList<Column> columns) {
+//		create cards
+		ArrayList<Card> cards = new ArrayList<>();
+		for (String suit: suits) {
+			for (String rank: ranks) {
+				cards.add(new Card(rank, suit, null));
+			}
+		}
+
+//		 assign cards to columns
+		for (int i = 0; i < 52; i++) {
+			int index = (int) ( Math.random() * cards.size() );
+			Card card = cards.get(index);
+			columns.get(i % 8).getChildren().add(new Card(card.getValue() + "", card.getSuit(), columns.get(i % 8)));
+			cards.remove(index);
+		}
+	}
+	
+	private void parseOnCols(ArrayList<Column> stacks) {
 		ArrayList<String> lines = new ArrayList<>();
 		for (String line: GAME.lines) {
 			if ( line.contains("ON") ) {
@@ -120,7 +134,7 @@ public class Controller {
 		};
 	}
 	
-	private void parseBottomCols() {
+	private void parseBottomCols(ArrayList<Column> stacks) {
 		for (String line: GAME.lines) {
 			if ( line.contains("BOTTOMCOL") ) {
 				Pattern pattern = Pattern.compile("BOTTOMCOL ([DHCS])([A2-9JQK]|10)\\)");
@@ -140,5 +154,4 @@ public class Controller {
 			}
 		}
 	}
-	
 }

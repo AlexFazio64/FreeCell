@@ -16,7 +16,7 @@ public class Column extends VBox {
 		
 		setOnDragOver(event -> {
 			if ( event.getGestureSource() != this && event.getDragboard().hasString() && ( (Card) event.getGestureSource() ).stack != this ) {
-				if ( GAME.checkMove(event.getDragboard().getString(), getLastOfStack()) || GAME.godmode ) {
+				if ( GAME.checkColumn(event.getDragboard().getString(), getLastOfStack()) || GAME.godmode ) {
 					event.acceptTransferModes(TransferMode.MOVE);
 				}
 			}

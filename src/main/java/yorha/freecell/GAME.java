@@ -10,7 +10,7 @@ public class GAME {
 	public static boolean godmode;
 	public static ArrayList<String> lines = new ArrayList<>();
 	
-	public static boolean checkMove(String card, Card last) {
+	public static boolean checkColumn(String card, Card last) {
 		if ( last == null || godmode ) {
 			return true;
 		}
