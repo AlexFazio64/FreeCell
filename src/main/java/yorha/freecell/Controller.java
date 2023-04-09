@@ -42,7 +42,7 @@ public class Controller {
 	}
 	
 	private void setupExecuteButton() {
-		if ( GAME.plan.size() > 0 ) {
+		if ( GAME.plan.size() > 0 && GAME.problem.size() > 0 ) {
 			Button nextMove = new Button("Execute");
 			Label label = new Label(GAME.plan.get(0));
 			HBox bottom = new HBox(nextMove, label);
@@ -88,16 +88,19 @@ public class Controller {
 		Card destination = extractToken(matcher);
 		
 		switch (command) {
-			case "move-from-column-to-bottomcol", "move-from-bottomcol-to-column" -> {
+			case "move-from-bottomcol-to-column" -> {
 				target = findCardInColumn(target);
 				findColumnWithCard(destination).addCard(target);
+			}
+			case "move-from-column-to-bottomcol" -> {
+				target = findCardInColumn(target);
+				findBottomColumnWithCard().addCard(target);
 			}
 			case "move-from-column-to-column" -> {
 				destination = extractToken(matcher);
 				target = findCardInColumn(target);
 				findColumnWithCard(destination).addCard(target);
 			}
-			
 			case "move-from-column-to-home-top", "move-from-bottom-to-home" -> {
 				target = findCardInColumn(target);
 				findHomeCell(target).addCard(target);
@@ -117,6 +120,16 @@ public class Controller {
 				clearFreeCell(target);
 			}
 		}
+	}
+	
+	private Column findBottomColumnWithCard() {
+		for (Node columns: main.getChildren()) {
+			Column column = (Column) columns;
+			if ( column.getChildren().isEmpty() ) {
+				return column;
+			}
+		}
+		return null;
 	}
 	
 	private Card extractToken(Matcher matcher) {
